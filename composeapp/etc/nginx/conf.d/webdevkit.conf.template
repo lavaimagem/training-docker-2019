@@ -1,0 +1,25 @@
+server {
+    server_name ${PROJECT_NAME};
+    listen 80;
+    index index.php index.html;
+    error_log  /var/log/nginx/error.log;
+    access_log /var/log/nginx/access.log;
+    root /var/www/${PROJECT_PATH};
+
+    location / {
+        autoindex on;
+        try_files $uri $uri/ /index.php?_url=$uri&$args;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass php72:9001;
+        fastcgi_intercept_errors on;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}

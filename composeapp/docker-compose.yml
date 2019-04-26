@@ -1,0 +1,60 @@
+version: '3'
+
+services:
+  mysql:
+    hostname: mysql.webdevkit.docker.test
+    restart: unless-stopped
+    image: mysql:5.7
+    network_mode: bridge
+    expose:
+      - "3306"
+    ports:
+      - "3306:3306"
+    env_file:
+      - variables.env
+    volumes:
+      - ./etc/mysql/conf.d/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./etc/mysql/entrypoint:/docker-entrypoint-initdb.d
+      - ./data/mysql:/var/lib/mysql
+      - ./log/mysql:/var/log/mysql
+
+  php73:
+    hostname: php73.webdevkit.docker.test
+    restart: unless-stopped
+    image: php:7.3-fpm-stretch
+    #build: docker/php
+    network_mode: bridge
+    links:
+      - "mysql"
+    depends_on:
+      - "mysql"
+    env_file:
+      - variables.env
+    volumes:
+      - ./www:/var/www
+
+  nginx:
+    hostname: webdevkit.docker.test
+    image: nginx
+    restart: unless-stopped
+    network_mode: bridge
+    ports:
+      - "80:80"
+    links:
+      - "php73"
+    env_file:
+      - variables.env
+    volumes:
+      - ./etc/nginx/conf.d/:/etc/nginx/conf.d/
+      - ./www:/var/www
+      - ./log/nginx:/var/log/nginx
+    depends_on:
+      - php73
+
+volumes:
+  mysql:
+    driver: local
+  nginx:
+    driver: local
+  php72:
+    driver: local

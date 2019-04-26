@@ -1,0 +1,15 @@
+Dockerfile
+
+
+#### goes into dockerfile ###
+FROM nginx:alpine
+
+COPY index.html /usr/share/nginx/html
+
+
+####
+
+
+Commands:
+
+$  docker build -t nginx/test

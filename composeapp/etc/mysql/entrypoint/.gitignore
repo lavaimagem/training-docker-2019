@@ -1,0 +1,4 @@
+*
+!.gitignore
+!00-sakila-schema.sql.gz
+!01-sakila-data.sql.gz
